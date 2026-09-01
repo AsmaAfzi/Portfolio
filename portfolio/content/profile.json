@@ -1,0 +1,32 @@
+{
+  "intro": "Hi, I'm Asma — a developer passionate about building thoughtful software. I enjoy working across the stack, learning new technologies, and turning ideas into projects that solve real problems.",
+  "experience": [
+    {
+      "id": "exp-mtindr4l",
+      "company": "JS",
+      "role": "hga",
+      "startDate": "JAN 2024",
+      "endDate": "FEB 2024",
+      "description": "BZSG",
+      "highlights": [
+        "JHSAJHS"
+      ]
+    }
+  ],
+  "certifications": [
+    {
+      "id": "cert-mtine6w5",
+      "title": "HEYYA",
+      "issuer": "NSNSN",
+      "pdfUrl": "https://www.upwork.com/nx/find-work/best-matches",
+      "status": "completed"
+    }
+  ],
+  "inProgressProjects": [
+    {
+      "id": "project-mtine0rj",
+      "title": "HSH",
+      "description": "HNZN"
+    }
+  ]
+}
