@@ -1,0 +1,16 @@
+{
+  "home": {
+    "eyebrow": "Portfolio",
+    "title": "Repositories",
+    "description": "Selected projects from GitHub. Hidden repos stay on GitHub — they just won't show here."
+  },
+  "layout": {
+    "gridColumns": 1,
+    "showStars": true,
+    "showLanguage": true,
+    "showTopics": true
+  },
+  "hiddenRepoIds": [
+    971530001
+  ]
+}
