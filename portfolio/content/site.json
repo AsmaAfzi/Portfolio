@@ -1,12 +1,12 @@
 {
   "home": {
-    "eyebrow": "Portfolio",
-    "title": "Repositories",
+    "eyebrow": "Asma's Portfolio",
+    "title": "My Projects",
     "description": "Selected projects from GitHub. Hidden repos stay on GitHub — they just won't show here."
   },
   "layout": {
-    "gridColumns": 1,
-    "showStars": true,
+    "gridColumns": 3,
+    "showStars": false,
     "showLanguage": true,
     "showTopics": true
   },
