@@ -1,0 +1,14 @@
+{
+  "slug": "sample-project",
+  "title": "Sample Project",
+  "description": "Replace this with a real project. The CMS writes JSON files like this one into content/projects.",
+  "tech": ["Next.js", "TypeScript", "GitHub API"],
+  "links": {
+    "live": "",
+    "github": ""
+  },
+  "image": "",
+  "featured": true,
+  "createdAt": "2026-08-19T00:00:00.000Z",
+  "updatedAt": "2026-08-19T00:00:00.000Z"
+}

@@ -1,0 +1,26 @@
+{
+  "colors": {
+    "background": "#f4f4f1",
+    "foreground": "#171717",
+    "muted": "#5c5c5c",
+    "card": "#fafaf7",
+    "cardBorder": "#e8e8e3",
+    "accent": "#171717",
+    "accentForeground": "#fafaf7"
+  },
+  "radius": {
+    "card": "1rem",
+    "button": "0.75rem",
+    "image": "0.75rem",
+    "pill": "9999px"
+  },
+  "spacing": {
+    "cardPadding": "1.5rem",
+    "sectionGap": "1.5rem",
+    "pageWidth": "72rem"
+  },
+  "typography": {
+    "eyebrowSize": "0.75rem",
+    "titleSize": "2rem"
+  }
+}

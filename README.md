@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a [Next.js](https://nextjs.org) portfolio with a GitHub-API CMS.
 
-## Getting Started
+Project and theme data live in `content/`. The admin UI commits JSON to GitHub via Octokit; Vercel redeploys from those commits.
 
-First, run the development server:
+## Setup
+
+```bash
+npm install
+cp .env.example .env.local
+```
+
+Fill `.env.local`:
+
+- `ADMIN_PASSWORD` — gates the CMS
+- `CMS_SESSION_SECRET` — signs the session cookie (use a long random string)
+- `GITHUB_TOKEN` — PAT with Contents read/write
+- `GITHUB_OWNER` / `GITHUB_REPO` — this repository
+- `GITHUB_BRANCH` — usually `main`
+- `GITHUB_CONTENT_PREFIX` — leave empty if this app is the repo root; set to `portfolio` if the Next app lives in that folder
+- `CLOUDINARY_*` — optional, for image uploads in the CMS
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Public site: [http://localhost:3000](http://localhost:3000)  
+CMS: [http://localhost:3000/admin/login](http://localhost:3000/admin/login)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## CMS routes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/admin/projects` — list projects
+- `/admin/projects/new` — create
+- `/admin/projects/[slug]/edit` — edit or delete
+- `/admin/theme` — edit `content/theme.json`
 
-## Learn More
+## API
 
-To learn more about Next.js, take a look at the following resources:
+| Method | Route | Auth | Purpose |
+|--------|-------|------|---------|
+| GET | `/api/projects` | Public | List projects |
+| POST | `/api/projects` | Admin | Create project |
+| GET | `/api/projects/[slug]` | Public | Get one project |
+| PUT | `/api/projects/[slug]` | Admin | Update project |
+| DELETE | `/api/projects/[slug]` | Admin | Delete project |
+| GET | `/api/theme` | Public | Get theme |
+| PUT | `/api/theme` | Admin | Update theme |
+| POST | `/api/upload` | Admin | Upload image to Cloudinary |
+| POST | `/api/auth/login` | Public | Sign in |
+| POST | `/api/auth/logout` | Public | Sign out |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Images: upload via the CMS form (Cloudinary) or paste a CDN URL.
