@@ -1,15 +1,15 @@
 {
   "colors": {
-    "background": "#038f55",
-    "backgroundAlt": "#8f37bd",
-    "backgroundText": "#eef1f0",
+    "background": "#40368f",
+    "backgroundAlt": "#bd557d",
+    "backgroundText": "#ffffff",
     "foreground": "#251b28",
     "muted": "#5f5a67",
     "card": "#ffffff",
-    "cardBorder": "#e4e4f0",
-    "accent": "#8abfb2",
-    "accentForeground": "#01332b",
-    "secondary": "#c4c4db"
+    "cardBorder": "#e6e3f0",
+    "accent": "#e8bcb5",
+    "accentForeground": "#013d34",
+    "secondary": "#eec0f7"
   },
   "radius": {
     "card": "1.15rem",
@@ -18,17 +18,17 @@
     "pill": "9999px"
   },
   "spacing": {
-    "cardPadding": "1.6rem",
-    "sectionGap": "1.6rem",
+    "cardPadding": "1.9rem",
+    "sectionGap": "1.8rem",
     "pageWidth": "72rem"
   },
   "typography": {
-    "eyebrowSize": "0.75rem",
-    "titleSize": "2.1rem"
+    "eyebrowSize": "0.8rem",
+    "titleSize": "2.25rem"
   },
   "effects": {
-    "lavaBlur": "16",
-    "lavaIntensity": "44",
-    "lavaSpeed": "1"
+    "lavaBlur": "0",
+    "lavaIntensity": "25",
+    "lavaSpeed": "1.5"
   }
 }
