@@ -15,7 +15,7 @@
     "card": "1.15rem",
     "button": "0.75rem",
     "image": "0.85rem",
-    "pill": "9999px"
+    "pill": "0.75rem"
   },
   "spacing": {
     "cardPadding": "1.9rem",
