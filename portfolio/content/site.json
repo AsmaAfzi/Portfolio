@@ -1,6 +1,6 @@
 {
   "home": {
-    "eyebrow": "Asma's Portfolio",
+    "eyebrow": "Professional Portfolio",
     "title": "Asma Mohammad Afzal",
     "description": "Building full-stack apps, APIs, and AI-powered systems from prototype to production.",
     "role": "Full-Stack Software Engineer",
@@ -8,6 +8,7 @@
     "availability": "Open to opportunities",
     "links": {
       "github": "https://github.com/AsmaAfzi",
+      "linkedin": "https://www.linkedin.com/in/asma-afzal-59526726b/",
       "email": "asma.afzi21@gmail.com"
     }
   },
