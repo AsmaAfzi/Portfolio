@@ -1,32 +1,135 @@
 {
-  "intro": "Hi, I'm Asma — a developer passionate about building thoughtful software. I enjoy working across the stack, learning new technologies, and turning ideas into projects that solve real problems.",
+  "intro": "I'm a Full-Stack Software Engineer based in Sharjah, UAE, with hands-on experience building and deploying REST APIs, microservices, and full-stack web applications end-to-end — from database design to cloud deployment.\n\nI'm proficient in Python, JavaScript/TypeScript, React, Node.js, and FastAPI, with strong grounding in PostgreSQL, MySQL, and MongoDB, plus production DevOps practice (Docker, Kubernetes, CI/CD, Git). I also bring applied AI/ML experience (TensorFlow, NLP, MLOps) and a builder's mindset for shipping AI-driven features in real systems.",
+  "tools": [
+    {
+      "id": "tools-backend",
+      "name": "Backend & APIs",
+      "items": [
+        "Python",
+        "FastAPI",
+        "Node.js",
+        "Flask",
+        "REST APIs",
+        "Microservices",
+        "Socket.IO",
+        "Authentication"
+      ]
+    },
+    {
+      "id": "tools-frontend",
+      "name": "Frontend",
+      "items": [
+        "React",
+        "JavaScript",
+        "TypeScript",
+        "HTML5",
+        "CSS3",
+        "Streamlit",
+        "Responsive UI"
+      ]
+    },
+    {
+      "id": "tools-databases",
+      "name": "Databases",
+      "items": [
+        "PostgreSQL",
+        "MySQL",
+        "MongoDB",
+        "Firebase",
+        "Database Design"
+      ]
+    },
+    {
+      "id": "tools-devops",
+      "name": "Cloud & DevOps",
+      "items": [
+        "Docker",
+        "Kubernetes",
+        "Nginx",
+        "GitHub Actions",
+        "Terraform",
+        "Git",
+        "Vercel",
+        "Linux"
+      ]
+    },
+    {
+      "id": "tools-ai",
+      "name": "Applied AI & ML",
+      "items": [
+        "TensorFlow",
+        "YOLOv8",
+        "Scikit-learn",
+        "MLflow",
+        "NLP",
+        "OCR",
+        "Computer Vision",
+        "Airflow"
+      ]
+    }
+  ],
   "experience": [
     {
-      "id": "exp-mtindr4l",
-      "company": "JS",
-      "role": "hga",
-      "startDate": "JAN 2024",
-      "endDate": "FEB 2024",
-      "description": "BZSG",
+      "id": "exp-alpsense",
+      "company": "Alpsense",
+      "role": "Full-Stack Developer Intern",
+      "startDate": "Jan 2026",
+      "endDate": "Apr 2026",
+      "description": "Built and shipped full-stack products remotely — from a real-time microcontroller IDE to the company website — with cloud deployment and CI/CD.",
       "highlights": [
-        "JHSAJHS"
+        "Built a full-stack, web-based microcontroller IDE (React, Node.js, Flask, Socket.IO) with real-time code execution and live developer feedback.",
+        "Deployed and containerized the app on a cloud VPS with Docker, Nginx HTTPS reverse proxy, and an automated CI/CD pipeline.",
+        "Designed and shipped the company website and reusable, responsive UI components with cross-device consistency."
+      ]
+    },
+    {
+      "id": "exp-metasynk",
+      "company": "MetaSynk Ltd",
+      "role": "Software Developer Intern",
+      "startDate": "Jul 2025",
+      "endDate": "Aug 2025",
+      "description": "Developed backend services and document-processing pipelines, focusing on secure APIs and OCR automation for financial documents.",
+      "highlights": [
+        "Developed RESTful APIs and backend services in Node.js with authentication, request validation, and secure data workflows.",
+        "Built OCR-based document processing pipelines to automate structured data extraction from scanned financial documents.",
+        "Integrated backend services with frontend applications and improved API performance through systematic debugging and testing."
       ]
     }
   ],
   "certifications": [
     {
-      "id": "cert-mtine6w5",
-      "title": "HEYYA",
-      "issuer": "NSNSN",
-      "pdfUrl": "https://www.upwork.com/nx/find-work/best-matches",
+      "id": "cert-rl-alberta",
+      "title": "Reinforcement Learning",
+      "issuer": "University of Alberta",
+      "date": "2025",
+      "status": "completed"
+    },
+    {
+      "id": "cert-db-colorado",
+      "title": "Database Management",
+      "issuer": "University of Colorado",
+      "date": "2024",
+      "status": "completed"
+    },
+    {
+      "id": "cert-dafz-hackathon",
+      "title": "First Runner-Up — DAFZ AI Hackathon",
+      "issuer": "DAFZ",
+      "date": "2025",
+      "description": "Awarded first runner-up at the DAFZ AI Hackathon.",
+      "status": "completed"
+    },
+    {
+      "id": "cert-ieee-xtreme",
+      "title": "Top 20 — IEEE Xtreme UAE",
+      "issuer": "IEEE",
+      "date": "2024",
+      "description": "Placed in the top 20 at IEEE Xtreme UAE.",
       "status": "completed"
     }
   ],
-  "inProgressProjects": [
-    {
-      "id": "project-mtine0rj",
-      "title": "HSH",
-      "description": "HNZN"
-    }
+  "inProgressProjects": [],
+  "inProgressRepoIds": [
+    1353484077
   ]
 }
