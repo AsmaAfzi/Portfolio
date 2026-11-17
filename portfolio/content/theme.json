@@ -28,7 +28,7 @@
   },
   "effects": {
     "lavaBlur": "0",
-    "lavaIntensity": "25",
+    "lavaIntensity": "22",
     "lavaSpeed": "1.5"
   }
 }
