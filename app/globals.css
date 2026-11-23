@@ -1984,6 +1984,323 @@ article.project-card:not(.ui-card-flush) {
   height: 100%;
 }
 
+/* Project case study: a panel that slides out of the card's side like a
+   drawer. An open card spans two columns, so neighbours are pushed along
+   (HorizontalScroller animates them and picks data-side). "over" covers the
+   card instead when the row is too narrow for two columns. */
+.h-scroller-track > li:has(> .project-slot.is-open:is([data-side="right"], [data-side="left"])) {
+  grid-column: span 2;
+}
+
+.project-slot.is-open:is([data-side="right"], [data-side="left"]) {
+  width: calc((100% - var(--row-gap, 0px)) / 2);
+}
+
+/* Opening leftwards keeps the card in the right half, where it already was on screen */
+.project-slot.is-open[data-side="left"] {
+  justify-self: end;
+}
+
+.project-slot {
+  position: relative;
+  display: grid;
+  height: 100%;
+  transition: translate 0.55s var(--ease-spring);
+}
+
+.project-slot > .project-card {
+  height: 100%;
+  transition:
+    border-radius 0.3s var(--ease-out),
+    box-shadow 0.5s var(--ease-out),
+    border-color 0.5s var(--ease-out);
+}
+
+/* The slot lifts as one so the card and its panel stay joined */
+.project-slot > .project-card:hover {
+  transform: none;
+}
+
+.project-slot:hover {
+  translate: 0 -5px;
+}
+
+.project-slot.is-open {
+  z-index: 3;
+}
+
+/* The joined corners square off as the panel starts to grow and only round
+   again once it has fully collapsed back into the card. */
+.project-slot.is-open > .project-card {
+  transition:
+    border-radius 0.12s var(--ease-out),
+    box-shadow 0.5s var(--ease-out),
+    border-color 0.5s var(--ease-out);
+}
+
+.project-slot:not(.is-open) > .project-card {
+  transition-delay: 0.45s, 0s, 0s;
+}
+
+/* Card and panel read as one surface: same border, a resting shadow, no
+   cursor glow (the panel has none) and no border along the join. */
+.project-slot.is-open > .project-card {
+  border-color: var(--card-border);
+  box-shadow:
+    0 1px 2px rgba(1, 51, 43, 0.06),
+    0 12px 30px -18px rgba(37, 27, 40, 0.35);
+}
+
+.project-slot.is-open > .project-card::before {
+  opacity: 0;
+}
+
+.project-slot.is-open[data-side="right"] > .project-card {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  border-right-color: transparent;
+}
+
+.project-slot.is-open[data-side="left"] > .project-card {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+  border-left-color: transparent;
+}
+
+/* The window covers the space the panel will fill and clips it, so the panel
+   can slide out from behind the card's edge. Only transforms animate, which
+   the browser runs on the compositor. Timings match HorizontalScroller's
+   push so the neighbouring cards stay level with the panel's edge. */
+.project-details-window {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(100% - 1px);
+  width: calc(100% + var(--row-gap, 0px) + 1px);
+  display: none;
+  overflow: hidden;
+  border-radius: 0 var(--card-radius) var(--card-radius) 0;
+  transition: display 0.53s allow-discrete;
+}
+
+.project-slot[data-side="left"] > .project-details-window {
+  left: auto;
+  right: calc(100% - 1px);
+  border-radius: var(--card-radius) 0 0 var(--card-radius);
+}
+
+.project-slot[data-side="over"] > .project-details-window {
+  left: 0;
+  width: 100%;
+  border-radius: var(--card-radius);
+}
+
+.project-slot.is-open > .project-details-window {
+  display: block;
+}
+
+.project-details {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  height: 100%;
+  padding: calc(var(--card-padding) * 1.1);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-left: 0;
+  border-radius: inherit;
+  transform: translateX(-100%);
+  will-change: transform;
+  /* Closing waits for the content to fade first */
+  transition: transform 0.45s var(--ease-out) 0.08s;
+}
+
+.project-slot[data-side="left"] .project-details {
+  border-left: 1px solid var(--card-border);
+  border-right: 0;
+  transform: translateX(100%);
+}
+
+/* Too narrow for two columns: slide up over the card instead */
+.project-slot[data-side="over"] .project-details {
+  border: 1px solid var(--card-border);
+  transform: translateY(100%);
+}
+
+.project-slot.is-open .project-details {
+  transform: none;
+  transition: transform 0.6s var(--ease-out);
+}
+
+/* Short divider where the panel meets the card */
+.project-details::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 1px;
+  height: 42%;
+  border-radius: 1px;
+  background: color-mix(in srgb, var(--foreground) 16%, transparent);
+  translate: 0 -50%;
+  opacity: 0;
+  transition: opacity 0.1s var(--ease-out);
+}
+
+.project-slot[data-side="left"] .project-details::before {
+  left: auto;
+  right: 0;
+}
+
+.project-slot[data-side="over"] .project-details::before {
+  display: none;
+}
+
+.project-slot.is-open .project-details::before {
+  opacity: 1;
+  transition: opacity 0.4s var(--ease-out) 0.3s;
+}
+
+/* The content travels with the drawer and fades in as it arrives */
+.project-details > * {
+  opacity: 0;
+  transition: opacity 0.1s var(--ease-out);
+}
+
+.project-slot.is-open .project-details > * {
+  opacity: 1;
+  transition: opacity 0.45s var(--ease-out) 0.12s;
+}
+
+@starting-style {
+  .project-slot.is-open .project-details {
+    transform: translateX(-100%);
+  }
+
+  .project-slot.is-open[data-side="left"] .project-details {
+    transform: translateX(100%);
+  }
+
+  .project-slot.is-open[data-side="over"] .project-details {
+    transform: translateY(100%);
+  }
+
+  .project-slot.is-open .project-details > *,
+  .project-slot.is-open .project-details::before {
+    opacity: 0;
+  }
+}
+
+.project-details-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.project-details-close {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  flex: none;
+  border: 1px solid var(--card-border);
+  border-radius: 50%;
+  background: var(--card-bg);
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    transform 0.4s var(--ease-spring),
+    color 0.2s var(--ease-out);
+}
+
+.project-details-close:hover {
+  transform: rotate(90deg);
+  color: var(--foreground);
+}
+
+.project-details-body {
+  display: grid;
+  align-content: start;
+  gap: 0.95rem;
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 0.35rem;
+  margin-right: -0.35rem;
+  scrollbar-width: thin;
+}
+
+.project-details-section {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.project-details-section h4 {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-accent);
+}
+
+.site .project-details-section p,
+.project-details-section ul {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
+
+.site .project-details-section ul {
+  display: grid;
+  gap: 0.2rem;
+  padding-left: 1.1rem;
+  list-style: disc;
+  color: var(--muted);
+}
+
+.project-details-section li::marker {
+  color: var(--accent);
+}
+
+.site .project-details-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  align-self: flex-start;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--card-border);
+  width: 100%;
+  color: var(--foreground);
+  font-size: 0.85rem;
+  background-image: none;
+}
+
+.project-details-toggle {
+  cursor: pointer;
+  font: inherit;
+}
+
+.project-slot.is-open .project-details-toggle {
+  background-color: color-mix(in srgb, var(--mint) 24%, var(--paper));
+  border-color: color-mix(in srgb, var(--mint) 55%, var(--card-border));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .project-details,
+  .project-details > *,
+  .project-details-window,
+  .project-slot,
+  .project-slot.is-open .project-details,
+  .project-slot.is-open .project-details > *,
+  .project-slot.is-open .project-details::before {
+    transition: none;
+  }
+}
+
 @media (max-width: 900px) {
   .h-scroller {
     --per-view: min(2, var(--per-view-max, 3));

@@ -9,6 +9,7 @@ import { StickySiteHeader, type HeaderSection } from "@/components/StickySiteHea
 import { ToolsSection } from "@/components/ToolsSection";
 import { ProjectCard } from "@/components/ProjectCard";
 import { getDisplayedRepos, getReposWithDescriptions } from "@/lib/display";
+import { getCaseStudies } from "@/lib/case-study";
 import { getRepoLanguages } from "@/lib/github-repos";
 import { getDetectedTech, mergeTech } from "@/lib/repo-tech";
 import { getCompletedCertifications, getProfile } from "@/lib/profile";
@@ -22,13 +23,15 @@ export default async function Home() {
   let allRepos: Awaited<ReturnType<typeof getReposWithDescriptions>> = [];
   let languages: Awaited<ReturnType<typeof getRepoLanguages>> = {};
   let detectedTech: Awaited<ReturnType<typeof getDetectedTech>> = {};
+  let caseStudies: Awaited<ReturnType<typeof getCaseStudies>> = {};
   let error = "";
 
   try {
     [repos, allRepos] = await Promise.all([getDisplayedRepos(), getReposWithDescriptions()]);
-    [languages, detectedTech] = await Promise.all([
+    [languages, detectedTech, caseStudies] = await Promise.all([
       site.layout.showLanguage ? getRepoLanguages(repos) : {},
       getDetectedTech(repos),
+      getCaseStudies(repos),
     ]);
   } catch (err) {
     error = err instanceof Error ? err.message : "Could not load repositories.";
@@ -108,6 +111,8 @@ export default async function Home() {
             heading={projectsTitle}
             label="projects"
             perView={site.layout.gridColumns}
+            autoPlay={5000}
+            loop
           >
             {repos.map((repo) => (
               <li key={repo.id}>
@@ -118,6 +123,7 @@ export default async function Home() {
                   showLanguage={site.layout.showLanguage}
                   showTopics={site.layout.showTopics}
                   showStars={site.layout.showStars}
+                  caseStudy={caseStudies[repo.id]}
                 />
               </li>
             ))}

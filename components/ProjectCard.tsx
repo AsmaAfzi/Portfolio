@@ -1,5 +1,6 @@
-import { ArrowUpRight, Code2, Globe, Star } from "lucide-react";
+import { ArrowUpRight, BookOpen, Code2, Globe, Star, X } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import type { CaseStudySection } from "@/lib/case-study";
 import type { GitHubRepo, RepoLanguage } from "@/lib/github-repos";
 import { languageColor } from "@/lib/language-colors";
 import { mergeTech } from "@/lib/repo-tech";
@@ -11,6 +12,7 @@ type ProjectCardProps = {
   showLanguage: boolean;
   showTopics: boolean;
   showStars: boolean;
+  caseStudy?: CaseStudySection[];
 };
 
 // Languages under this share are folded into "Other" so the legend stays short.
@@ -32,7 +34,11 @@ export function ProjectCard({
   showLanguage,
   showTopics,
   showStars,
+  caseStudy = [],
 }: ProjectCardProps) {
+  const title = repo.name.replace(/[-_]+/g, " ");
+  const detailsId = `case-study-${repo.id}`;
+  const hasDetails = caseStudy.length > 0;
   const languageList = showLanguage
     ? summarizeLanguages(
         languages && languages.length > 0
@@ -46,12 +52,12 @@ export function ProjectCard({
   const chips = allChips.slice(0, MAX_CHIPS);
   const hiddenChips = allChips.slice(MAX_CHIPS);
 
-  return (
+  const card = (
     <Card as="article" className="project-card">
       <div className="project-card-text">
         <h3>
           <a href={repo.htmlUrl} target="_blank" rel="noreferrer">
-            {repo.name.replace(/[-_]+/g, " ")}
+            {title}
           </a>
         </h3>
         <p>{repo.description ?? "No description."}</p>
@@ -119,7 +125,72 @@ export function ProjectCard({
             {repo.stargazersCount}
           </span>
         ) : null}
+        {hasDetails ? (
+          <button
+            type="button"
+            className="project-action project-details-toggle"
+            data-details-toggle=""
+            aria-expanded="false"
+            aria-controls={detailsId}
+          >
+            <BookOpen size={15} aria-hidden="true" />
+            Case study
+          </button>
+        ) : null}
       </div>
     </Card>
+  );
+
+  if (!hasDetails) return card;
+
+  // HorizontalScroller opens the panel on hover or via the toggle, on
+  // whichever side of the card has room in the visible row. The window clips
+  // the panel so it can slide out from behind the card's edge.
+  return (
+    <div className="project-slot" data-expandable="">
+      {card}
+      <div className="project-details-window">
+        <aside className="project-details" id={detailsId} aria-label={`${title} case study`}>
+          <div className="project-details-head">
+            <p className="project-label">Case study</p>
+            <button
+              type="button"
+              className="project-details-close"
+              data-details-close=""
+              aria-label="Close case study"
+            >
+              <X size={16} aria-hidden="true" />
+            </button>
+          </div>
+          <div className="project-details-body">
+            {caseStudy.map((section) => (
+              <section key={section.key} className="project-details-section">
+                <h4>{section.label}</h4>
+                {section.blocks.map((block, index) =>
+                  block.type === "p" ? (
+                    <p key={index}>{block.text}</p>
+                  ) : (
+                    <ul key={index}>
+                      {block.items.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  ),
+                )}
+              </section>
+            ))}
+          </div>
+          <a
+            href={`${repo.htmlUrl}#readme`}
+            target="_blank"
+            rel="noreferrer"
+            className="project-details-more"
+          >
+            Full README
+            <ArrowUpRight size={14} aria-hidden="true" />
+          </a>
+        </aside>
+      </div>
+    </div>
   );
 }

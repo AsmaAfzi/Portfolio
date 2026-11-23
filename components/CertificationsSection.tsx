@@ -21,6 +21,8 @@ export function CertificationsSection({
         heading={<SectionTitle icon={Award}>Certifications</SectionTitle>}
         label="certifications"
         perView={gridColumns}
+        autoPlay={5000}
+        loop
       >
         {certifications.map((cert) => (
           <li key={cert.id}>
