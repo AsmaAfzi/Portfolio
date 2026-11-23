@@ -1,51 +1,50 @@
-This is a [Next.js](https://nextjs.org) portfolio with a GitHub-API CMS.
+# Portfolio
 
-Project and theme data live in `content/`. The admin UI commits JSON to GitHub via Octokit; Vercel redeploys from those commits.
+Next.js portfolio that displays your **public GitHub repositories** (read-only). Admin lets you hide repos from the site and edit layout/theme — nothing deletes repos on GitHub.
 
-## Setup
+## Quick setup
 
 ```bash
 npm install
 cp .env.example .env.local
 ```
 
-Fill `.env.local`:
+```env
+GITHUB_OWNER=your-github-username
+```
 
-- `ADMIN_PASSWORD` — gates the CMS
-- `CMS_SESSION_SECRET` — signs the session cookie (use a long random string)
-- `GITHUB_TOKEN` — PAT with Contents read/write
-- `GITHUB_OWNER` / `GITHUB_REPO` — this repository
-- `GITHUB_BRANCH` — usually `main`
-- `GITHUB_CONTENT_PREFIX` — leave empty if this app is the repo root; set to `portfolio` if the Next app lives in that folder
-- `CLOUDINARY_*` — optional, for image uploads in the CMS
+Optional: `GITHUB_TOKEN` for higher API rate limits (read-only is enough).
+
+## Admin CMS
+
+Sign in at `/admin/login`. Configure admin env vars to save settings to GitHub:
+
+- `ADMIN_PASSWORD`, `CMS_SESSION_SECRET`
+- `GITHUB_TOKEN` with **Contents: Read and write** on this portfolio repo
+- `GITHUB_REPO`, `GITHUB_BRANCH`, `GITHUB_CONTENT_PREFIX`
+
+| Page | What it does |
+|------|----------------|
+| `/admin/repos` | Show/hide repos on your site (does not touch GitHub) |
+| `/admin/profile` | Intro, work experience, certifications (PDF upload), in-progress items |
+| `/admin/appearance` | Homepage copy, grid columns, card toggles |
+| `/admin/theme` | Colors, spacing, typography, radius |
+
+Settings are saved to `content/site.json`, `content/profile.json`, and `content/theme.json` via GitHub commits.
 
 ```bash
 npm run dev
 ```
 
-Public site: [http://localhost:3000](http://localhost:3000)  
-CMS: [http://localhost:3000/admin/login](http://localhost:3000/admin/login)
-
-## CMS routes
-
-- `/admin/projects` — list projects
-- `/admin/projects/new` — create
-- `/admin/projects/[slug]/edit` — edit or delete
-- `/admin/theme` — edit `content/theme.json`
+Public site: [http://localhost:3000](http://localhost:3000)
 
 ## API
 
-| Method | Route | Auth | Purpose |
-|--------|-------|------|---------|
-| GET | `/api/projects` | Public | List projects |
-| POST | `/api/projects` | Admin | Create project |
-| GET | `/api/projects/[slug]` | Public | Get one project |
-| PUT | `/api/projects/[slug]` | Admin | Update project |
-| DELETE | `/api/projects/[slug]` | Admin | Delete project |
-| GET | `/api/theme` | Public | Get theme |
-| PUT | `/api/theme` | Admin | Update theme |
-| POST | `/api/upload` | Admin | Upload image to Cloudinary |
-| POST | `/api/auth/login` | Public | Sign in |
-| POST | `/api/auth/logout` | Public | Sign out |
-
-Images: upload via the CMS form (Cloudinary) or paste a CDN URL.
+| Route | Auth | Purpose |
+|-------|------|---------|
+| `GET /api/repos` | Public | All GitHub repos |
+| `GET /api/site` | Public | Site layout + hidden repo IDs |
+| `PUT /api/site` | Admin | Save layout / visibility |
+| `GET /api/theme` | Public | Theme tokens |
+| `GET /api/profile` | Public | Profile content (intro, experience, certs) |
+| `PUT /api/profile` | Admin | Save profile |

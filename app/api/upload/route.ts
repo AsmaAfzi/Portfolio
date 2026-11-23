@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { jsonError, requireSession } from "@/lib/api";
-import { uploadImage } from "@/lib/cloudinary";
+import { uploadImage, uploadRaw } from "@/lib/cloudinary";
 
 const maxBytes = 5 * 1024 * 1024;
-const allowedTypes = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
+const imageTypes = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
+const pdfTypes = new Set(["application/pdf"]);
 
 export async function POST(request: Request) {
   const auth = await requireSession();
@@ -13,26 +14,30 @@ export async function POST(request: Request) {
   const file = form.get("file");
 
   if (!(file instanceof File)) {
-    return jsonError("Image file is required.", 400);
-  }
-
-  if (!allowedTypes.has(file.type)) {
-    return jsonError("Use a JPG, PNG, WebP, or GIF image.", 400);
+    return jsonError("File is required.", 400);
   }
 
   if (file.size > maxBytes) {
-    return jsonError("Image must be 5 MB or smaller.", 400);
+    return jsonError("File must be 5 MB or smaller.", 400);
+  }
+
+  const isImage = imageTypes.has(file.type);
+  const isPdf = pdfTypes.has(file.type);
+
+  if (!isImage && !isPdf) {
+    return jsonError("Use a JPG, PNG, WebP, GIF image, or PDF document.", 400);
   }
 
   try {
-    const uploaded = await uploadImage(file);
+    const uploaded = isPdf ? await uploadRaw(file) : await uploadImage(file);
     return NextResponse.json({
       ok: true,
       url: uploaded.url,
       publicId: uploaded.publicId,
+      type: isPdf ? "pdf" : "image",
     });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Image upload failed.";
+    const message = error instanceof Error ? error.message : "Upload failed.";
     return jsonError(message, 500);
   }
 }

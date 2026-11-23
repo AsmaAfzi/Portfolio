@@ -7,19 +7,19 @@ export default async function ThemePage() {
   const theme = await getTheme();
 
   return (
-    <main className="cms">
+    <main className="cms cms-wide">
       <Card className="cms-header">
         <div>
           <p className="eyebrow">Admin</p>
           <h1>Theme</h1>
+          <p className="cms-header-desc">
+            Changes show up in the preview straight away. Publish when you&apos;re happy.
+          </p>
         </div>
         <AdminNav />
       </Card>
 
-      <Card>
-        <p>Edit design tokens. Changes commit to GitHub and redeploy like projects.</p>
-        <ThemeForm initialTheme={theme} />
-      </Card>
+      <ThemeForm initialTheme={theme} />
     </main>
   );
 }

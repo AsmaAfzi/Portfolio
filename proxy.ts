@@ -2,11 +2,13 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { isValidSessionToken, SESSION_COOKIE } from "@/lib/auth";
 
-const protectedApiPrefixes = ["/api/projects", "/api/theme", "/api/upload"];
+const protectedApiPrefixes = ["/api/projects", "/api/theme", "/api/site", "/api/profile", "/api/upload"];
 
 function isProtectedApi(pathname: string, method: string) {
   if (method === "GET" && pathname === "/api/projects") return false;
   if (method === "GET" && pathname === "/api/theme") return false;
+  if (method === "GET" && pathname === "/api/site") return false;
+  if (method === "GET" && pathname === "/api/profile") return false;
   return protectedApiPrefixes.some(
     (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
   );
@@ -24,7 +26,7 @@ export function proxy(request: NextRequest) {
   }
 
   if (isLogin && authed) {
-    return NextResponse.redirect(new URL("/admin/projects", request.url));
+    return NextResponse.redirect(new URL("/admin/repos", request.url));
   }
 
   if (isProtectedApi(pathname, request.method) && !authed) {
@@ -41,6 +43,8 @@ export const config = {
     "/api/projects",
     "/api/projects/:path*",
     "/api/theme",
+    "/api/site",
+    "/api/profile",
     "/api/upload",
   ],
 };

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { LavaLamp } from "@/components/LavaLamp";
+import { PointerSpotlight } from "@/components/PointerSpotlight";
 import { ThemeStyles } from "@/components/ThemeStyles";
 import "./globals.css";
 
@@ -27,7 +29,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <ThemeStyles />
+        <LavaLamp />
+        <PointerSpotlight />
         {children}
+        <div id="site-top-layer" className="site-top-layer" />
       </body>
     </html>
   );

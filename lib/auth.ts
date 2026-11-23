@@ -1,10 +1,10 @@
 import { createHmac, timingSafeEqual } from "crypto";
-import { getEnv } from "@/lib/env";
+import { getAuthEnv } from "@/lib/env";
 
 export const SESSION_COOKIE = "cms_session";
 
 export function createSessionToken() {
-  const secret = getEnv().cmsSessionSecret;
+  const secret = getAuthEnv().cmsSessionSecret;
   return createHmac("sha256", secret).update("cms-authenticated").digest("hex");
 }
 
@@ -24,7 +24,7 @@ export function isValidSessionToken(token: string | undefined) {
 
 export function passwordsMatch(input: string) {
   try {
-    const expected = getEnv().adminPassword;
+    const expected = getAuthEnv().adminPassword;
     if (!input) return false;
 
     const actual = Buffer.from(input);

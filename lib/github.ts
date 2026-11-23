@@ -1,7 +1,9 @@
 import { Octokit } from "octokit";
-import { getEnv } from "@/lib/env";
+import { getGitHubEnv } from "@/lib/env";
 import type { Project } from "@/lib/project";
 import type { ThemeConfig } from "@/lib/theme";
+import type { SiteConfig } from "@/lib/site";
+import type { Profile } from "@/lib/profile";
 
 type CommitResult = {
   updated: boolean;
@@ -10,12 +12,12 @@ type CommitResult = {
 };
 
 function getOctokit() {
-  const env = getEnv();
+  const env = getGitHubEnv();
   return new Octokit({ auth: env.githubToken });
 }
 
 function repoInfo() {
-  const env = getEnv();
+  const env = getGitHubEnv();
   return {
     owner: env.githubOwner,
     repo: env.githubRepo,
@@ -35,6 +37,14 @@ export function projectPath(slug: string) {
 
 export function themePath() {
   return contentPath("content/theme.json");
+}
+
+export function sitePath() {
+  return contentPath("content/site.json");
+}
+
+export function profilePath() {
+  return contentPath("content/profile.json");
 }
 
 async function getFileSha(path: string) {
@@ -124,4 +134,12 @@ export async function deleteProject(slug: string) {
 
 export async function commitTheme(theme: ThemeConfig) {
   return commitFile(themePath(), theme, "cms: update theme");
+}
+
+export async function commitSite(site: SiteConfig) {
+  return commitFile(sitePath(), site, "cms: update site settings");
+}
+
+export async function commitProfile(profile: Profile) {
+  return commitFile(profilePath(), profile, "cms: update profile");
 }

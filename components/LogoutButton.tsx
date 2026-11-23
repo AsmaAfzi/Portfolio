@@ -1,5 +1,6 @@
 "use client";
 
+import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function LogoutButton() {
@@ -12,7 +13,8 @@ export function LogoutButton() {
   }
 
   return (
-    <button className="cms-button cms-button-ghost" type="button" onClick={logout}>
+    <button className="cms-button cms-button-ghost cms-button-sm" type="button" onClick={logout}>
+      <LogOut size={15} aria-hidden="true" />
       Sign out
     </button>
   );

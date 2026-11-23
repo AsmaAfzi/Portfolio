@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { jsonError, mapGitHubError, requireSession } from "@/lib/api";
 import { commitTheme } from "@/lib/github";
-import { defaultTheme, getTheme } from "@/lib/theme";
+import { getTheme, mergeTheme, saveTheme } from "@/lib/theme";
 import { readThemePayload } from "@/lib/request";
 import { formatZodError, themeSchema } from "@/lib/schemas";
 import { revalidatePath } from "next/cache";
@@ -23,16 +23,13 @@ export async function PUT(request: Request) {
     return jsonError(formatZodError(parsed.error), 400);
   }
 
-  const theme = {
-    colors: { ...defaultTheme.colors, ...parsed.data.colors },
-    radius: { ...defaultTheme.radius, ...parsed.data.radius },
-    spacing: { ...defaultTheme.spacing, ...parsed.data.spacing },
-    typography: { ...defaultTheme.typography, ...parsed.data.typography },
-  };
+  const theme = mergeTheme(parsed.data);
 
   try {
     const result = await commitTheme(theme);
+    await saveTheme(theme);
     revalidatePath("/", "layout");
+    revalidatePath("/");
 
     return NextResponse.json({
       ok: true,
