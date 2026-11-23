@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "fs/promises";
 import path from "path";
+import { canWriteLocalContent } from "@/lib/local-content";
 import { defaultTheme, mergeTheme, type ThemeConfig } from "@/lib/theme-shared";
 
 export { defaultTheme, mergeTheme, themeToCssVars } from "@/lib/theme-shared";
@@ -30,6 +31,8 @@ export async function getTheme(): Promise<ThemeConfig> {
 }
 
 export async function saveTheme(theme: ThemeConfig) {
+  if (!canWriteLocalContent()) return;
+
   const dir = path.join(process.cwd(), "content");
   await mkdir(dir, { recursive: true });
   await writeFile(path.join(dir, "theme.json"), `${JSON.stringify(theme, null, 2)}\n`, "utf8");

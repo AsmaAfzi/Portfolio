@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "fs/promises";
 import path from "path";
+import { canWriteLocalContent } from "@/lib/local-content";
 
 export type SiteLinks = {
   github?: string;
@@ -86,6 +87,8 @@ export function isRepoVisible(repoId: number, site: SiteConfig) {
 }
 
 export async function saveSiteConfig(site: SiteConfig) {
+  if (!canWriteLocalContent()) return;
+
   const dir = path.join(process.cwd(), "content");
   await mkdir(dir, { recursive: true });
   await writeFile(path.join(dir, "site.json"), `${JSON.stringify(site, null, 2)}\n`, "utf8");

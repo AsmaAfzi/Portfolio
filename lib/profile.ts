@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from "fs/promises";
 import path from "path";
+import { canWriteLocalContent } from "@/lib/local-content";
 
 export type InProgressProject = {
   id: string;
@@ -88,6 +89,8 @@ export async function getProfile(): Promise<Profile> {
 }
 
 export async function saveProfile(profile: Profile) {
+  if (!canWriteLocalContent()) return;
+
   const dir = path.join(process.cwd(), "content");
   await mkdir(dir, { recursive: true });
   await writeFile(
