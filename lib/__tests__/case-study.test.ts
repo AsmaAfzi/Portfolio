@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseCaseStudy } from "../case-study";
+import { parseCaseStudy, summarizeReadme } from "../case-study";
 
 const labelled = `# SAINT-OPS
 
@@ -115,5 +115,28 @@ Detects products on shelves from CCTV feeds.
     const block = sections[0].blocks[0];
     expect(block.type === "p" && block.text.endsWith("…")).toBe(true);
     expect(block.type === "p" && block.text.length).toBeLessThanOrEqual(261);
+  });
+});
+
+describe("summarizeReadme", () => {
+  it("uses the intro paragraph under the title, skipping badges", () => {
+    const readme = `# EcoCoin\n\n[![CI](https://x/badge.svg)](https://x)\n\nA blockchain tourism booking platform with **secure** payments.\n\n## Installation\n\nnpm i`;
+    expect(summarizeReadme(readme)).toBe("A blockchain tourism booking platform with secure payments.");
+  });
+
+  it("prefers an Overview section", () => {
+    const readme = `# Tool\n\nShort tagline here.\n\n## Overview\n\nA dashboard that forecasts retail demand from sales history.`;
+    expect(summarizeReadme(readme)).toBe("A dashboard that forecasts retail demand from sales history.");
+  });
+
+  it("ends on a sentence when the paragraph is long", () => {
+    const readme = `# X\n\nThis project detects anomalies in industrial sensor data in real time. ${"It also does a lot more. ".repeat(10)}`;
+    expect(summarizeReadme(readme)).toBe(
+      `This project detects anomalies in industrial sensor data in real time.${" It also does a lot more.".repeat(4)}`,
+    );
+  });
+
+  it("returns null when there is nothing descriptive", () => {
+    expect(summarizeReadme("# Project\n\n## Installation\n\nRun the installer with npm.")).toBeNull();
   });
 });

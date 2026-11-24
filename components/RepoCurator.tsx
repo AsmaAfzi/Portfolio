@@ -2,21 +2,29 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import type { GitHubRepo } from "@/lib/github-repos";
+import type { DescribedRepo } from "@/lib/display";
 import { parseTechInput } from "@/lib/schemas";
 
-type RepoWithVisibility = GitHubRepo & { visible: boolean };
+type RepoWithVisibility = DescribedRepo & { visible: boolean };
 
 type RepoCuratorProps = {
   repos: RepoWithVisibility[];
   initialHiddenIds: number[];
   initialTech: Record<string, string[]>;
+  initialDescriptions: Record<string, string>;
   detectedTech: Record<number, string[]>;
 };
 
-export function RepoCurator({ repos, initialHiddenIds, initialTech, detectedTech }: RepoCuratorProps) {
+export function RepoCurator({
+  repos,
+  initialHiddenIds,
+  initialTech,
+  initialDescriptions,
+  detectedTech,
+}: RepoCuratorProps) {
   const router = useRouter();
   const [hiddenIds, setHiddenIds] = useState(new Set(initialHiddenIds));
+  const [descriptions, setDescriptions] = useState(initialDescriptions);
   // Kept as the raw comma-separated text while editing; split on save.
   const [techText, setTechText] = useState<Record<string, string>>(() =>
     Object.fromEntries(Object.entries(initialTech).map(([name, items]) => [name, items.join(", ")])),
@@ -53,6 +61,11 @@ export function RepoCurator({ repos, initialHiddenIds, initialTech, detectedTech
       body: JSON.stringify({
         ...current.site,
         hiddenRepoIds: Array.from(hiddenIds),
+        repoDescriptions: Object.fromEntries(
+          Object.entries(descriptions)
+            .map(([name, text]) => [name, text.trim()] as const)
+            .filter(([, text]) => text.length > 0),
+        ),
         repoTech: Object.fromEntries(
           Object.entries(techText)
             .map(([name, text]) => [name, parseTechInput(text)] as const)
@@ -69,7 +82,9 @@ export function RepoCurator({ repos, initialHiddenIds, initialTech, detectedTech
       return;
     }
 
-    setSuccess("Saved. Hidden repos stay on GitHub — they just won't show on your site.");
+    setSuccess(
+      "Saved. Your live site updates once Vercel finishes redeploying (about a minute). Hidden repos stay on GitHub.",
+    );
     router.refresh();
   }
 
@@ -98,6 +113,23 @@ export function RepoCurator({ repos, initialHiddenIds, initialTech, detectedTech
                     <span>{visible ? "Visible" : "Hidden"}</span>
                   </label>
                 </div>
+                <label className="cms-field">
+                  <span>Description</span>
+                  <textarea
+                    rows={2}
+                    maxLength={300}
+                    value={descriptions[repo.name] ?? ""}
+                    placeholder={repo.autoDescription ?? "Write a one-line description"}
+                    onChange={(event) =>
+                      setDescriptions((current) => ({ ...current, [repo.name]: event.target.value }))
+                    }
+                  />
+                  <small>
+                    {repo.autoDescription
+                      ? "Leave empty to use the greyed-out description, taken from GitHub or the README."
+                      : "No description on GitHub or in the README. Write one here."}
+                  </small>
+                </label>
                 {visible ? (
                   <div className="repo-curator-tech">
                     {detectedTech[repo.id] ? (

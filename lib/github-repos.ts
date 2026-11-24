@@ -13,6 +13,9 @@ export type GitHubRepo = {
   defaultBranch: string;
 };
 
+/** Tag on every cached GitHub read, so admin saves can refresh repos, READMEs and tech at once. */
+export const GITHUB_CACHE_TAG = "github";
+
 export function getDisplayConfig() {
   const owner = process.env.GITHUB_OWNER?.trim();
   if (!owner) {
@@ -41,7 +44,7 @@ export async function getRepoLanguages(
             "X-GitHub-Api-Version": "2022-11-28",
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           },
-          next: { revalidate: 3600 },
+          next: { revalidate: 3600, tags: [GITHUB_CACHE_TAG] },
         });
         if (!response.ok) return null;
         const bytes = (await response.json()) as Record<string, number>;
@@ -70,7 +73,8 @@ export async function getGitHubRepos(): Promise<GitHubRepo[]> {
         "X-GitHub-Api-Version": "2022-11-28",
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-      next: { revalidate: 3600 },
+      // Short so newly created repos appear within minutes.
+      next: { revalidate: 300, tags: [GITHUB_CACHE_TAG] },
     },
   );
 

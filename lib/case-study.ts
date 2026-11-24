@@ -1,4 +1,4 @@
-import type { GitHubRepo } from "@/lib/github-repos";
+import { GITHUB_CACHE_TAG, type GitHubRepo } from "@/lib/github-repos";
 
 export type CaseStudyKey = "problem" | "built" | "challenge" | "differently" | "impact";
 
@@ -250,6 +250,42 @@ export function parseCaseStudy(markdown: string): CaseStudySection[] {
   }));
 }
 
+const MAX_SUMMARY = 180;
+
+/** A one-line description from a README: the overview, else the intro under the title, else the problem. */
+export function summarizeReadme(markdown: string): string | null {
+  const segments = toSegments(markdown);
+  const overview = findSegment(segments, OVERVIEW, new Set());
+  const problem = findSegment(segments, SYNONYMS.problem, new Set());
+  const intro = segments.findIndex((segment, i) => i === 0 || segment.level === 1);
+  const candidates = [overview, intro, intro + 1, problem].filter(
+    (index) => index >= 0 && index < segments.length && !isUsageHeading(segments[index].title),
+  );
+
+  for (const index of candidates) {
+    const paragraph = toBlocks(segments[index].lines).find((block) => block.type === "p");
+    if (!paragraph || paragraph.type !== "p" || paragraph.text.length < 20) continue;
+    return shorten(paragraph.text);
+  }
+  return null;
+}
+
+function isUsageHeading(title: string) {
+  return /^(installation|install|setup|getting started|usage|requirements|prerequisites|license|table of contents|contents)$/.test(
+    normalizeTitle(title),
+  );
+}
+
+// Prefers ending on a full sentence over cutting mid-way.
+function shorten(text: string) {
+  const plain = text.replace(/…$/, "");
+  if (plain.length <= MAX_SUMMARY) return text;
+  const sentence = plain.slice(0, MAX_SUMMARY).match(/^.*[.!?](?=\s)/)?.[0];
+  if (sentence && sentence.length >= 60) return sentence;
+  const cut = plain.slice(0, MAX_SUMMARY);
+  return `${cut.slice(0, cut.lastIndexOf(" ")).replace(/[,;:.\s-]+$/, "")}…`;
+}
+
 // raw.githubusercontent.com paths are case-sensitive; these cover nearly every repo.
 const README_NAMES = ["README.md", "readme.md", "Readme.md"];
 
@@ -257,11 +293,27 @@ async function fetchReadme(repo: GitHubRepo) {
   for (const name of README_NAMES) {
     const response = await fetch(
       `https://raw.githubusercontent.com/${repo.fullName}/${encodeURIComponent(repo.defaultBranch)}/${name}`,
-      { next: { revalidate: 3600 } },
+      { next: { revalidate: 3600, tags: [GITHUB_CACHE_TAG] } },
     );
     if (response.ok) return response.text();
   }
   return null;
+}
+
+/** README-derived descriptions for each repo. Repos without a usable README are left out. */
+export async function getReadmeSummaries(repos: GitHubRepo[]): Promise<Record<number, string>> {
+  const entries = await Promise.all(
+    repos.map(async (repo) => {
+      try {
+        const readme = await fetchReadme(repo);
+        const summary = readme ? summarizeReadme(readme) : null;
+        return summary ? ([repo.id, summary] as const) : null;
+      } catch {
+        return null;
+      }
+    }),
+  );
+  return Object.fromEntries(entries.filter((entry) => entry !== null));
 }
 
 /** Case studies parsed from each repo's README. Repos without usable sections are left out. */

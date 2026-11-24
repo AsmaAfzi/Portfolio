@@ -73,7 +73,25 @@ async function getFileSha(path: string) {
   return null;
 }
 
+// A wrong prefix would otherwise "succeed" by committing to a folder the site never reads.
+async function assertContentRoot() {
+  const { owner, repo, branch, prefix } = repoInfo();
+  if (!prefix) return;
+
+  try {
+    await getOctokit().rest.repos.getContent({ owner, repo, path: `${prefix}/content`, ref: branch });
+  } catch (error) {
+    if (error && typeof error === "object" && "status" in error && error.status === 404) {
+      throw new Error(
+        `GITHUB_CONTENT_PREFIX is "${prefix}", but ${prefix}/content does not exist in ${owner}/${repo}. Clear GITHUB_CONTENT_PREFIX if the app is at the repo root.`,
+      );
+    }
+    throw error;
+  }
+}
+
 async function commitFile(path: string, body: unknown, message: string): Promise<CommitResult> {
+  await assertContentRoot();
   const octokit = getOctokit();
   const { owner, repo, branch } = repoInfo();
   const sha = await getFileSha(path);

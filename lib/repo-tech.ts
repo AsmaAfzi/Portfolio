@@ -1,4 +1,4 @@
-import { getDisplayConfig, type GitHubRepo } from "@/lib/github-repos";
+import { GITHUB_CACHE_TAG, getDisplayConfig, type GitHubRepo } from "@/lib/github-repos";
 
 // Curated so cards show meaningful frameworks and tools, not every utility
 // package. Keys are matched case-insensitively against dependency names.
@@ -161,7 +161,7 @@ function fromPythonManifest(text: string) {
 async function detectForRepo(repo: GitHubRepo, token: string | undefined): Promise<string[] | null> {
   const treeResponse = await fetch(
     `https://api.github.com/repos/${repo.fullName}/git/trees/${encodeURIComponent(repo.defaultBranch)}?recursive=1`,
-    { headers: githubHeaders(token), next: { revalidate: 3600 } },
+    { headers: githubHeaders(token), next: { revalidate: 3600, tags: [GITHUB_CACHE_TAG] } },
   );
   if (!treeResponse.ok) return null;
   const tree = (await treeResponse.json()) as { tree?: { path: string; type: string }[] };
@@ -190,7 +190,7 @@ async function detectForRepo(repo: GitHubRepo, token: string | undefined): Promi
         const encodedPath = path.split("/").map(encodeURIComponent).join("/");
         const response = await fetch(
           `https://raw.githubusercontent.com/${repo.fullName}/${encodeURIComponent(repo.defaultBranch)}/${encodedPath}`,
-          { next: { revalidate: 3600 } },
+          { next: { revalidate: 3600, tags: [GITHUB_CACHE_TAG] } },
         );
         return response.ok ? { path, text: await response.text() } : null;
       } catch {

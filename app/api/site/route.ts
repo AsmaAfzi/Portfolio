@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { jsonError, mapGitHubError, requireSession } from "@/lib/api";
 import { commitSite } from "@/lib/github";
+import { GITHUB_CACHE_TAG } from "@/lib/github-repos";
 import { defaultSite, getSiteConfig, saveSiteConfig } from "@/lib/site";
 import { formatZodError, siteSchema } from "@/lib/schemas";
 
@@ -31,6 +32,7 @@ export async function PUT(request: Request) {
   try {
     const result = await commitSite(site);
     await saveSiteConfig(site);
+    revalidateTag(GITHUB_CACHE_TAG, { expire: 0 });
     revalidatePath("/", "layout");
     revalidatePath("/");
 

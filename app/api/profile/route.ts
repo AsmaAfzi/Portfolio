@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { jsonError, mapGitHubError, requireSession } from "@/lib/api";
 import { commitProfile } from "@/lib/github";
+import { GITHUB_CACHE_TAG } from "@/lib/github-repos";
 import { defaultProfile, getProfile, saveProfile } from "@/lib/profile";
 import { formatZodError, profileSchema } from "@/lib/schemas";
 
@@ -32,6 +33,7 @@ export async function PUT(request: Request) {
   try {
     const result = await commitProfile(profile);
     await saveProfile(profile);
+    revalidateTag(GITHUB_CACHE_TAG, { expire: 0 });
     revalidatePath("/", "layout");
     revalidatePath("/");
 

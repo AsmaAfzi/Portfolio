@@ -150,5 +150,8 @@ export const profileSchema = z.object({
 });
 
 export function formatZodError(error: z.ZodError) {
-  return error.issues[0]?.message ?? "Invalid request.";
+  const issue = error.issues[0];
+  if (!issue) return "Invalid request.";
+  const field = issue.path.map((part) => (typeof part === "number" ? `#${part + 1}` : String(part))).join(" › ");
+  return field ? `${field}: ${issue.message}` : issue.message;
 }

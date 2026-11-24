@@ -20,8 +20,7 @@
   },
   "hiddenRepoIds": [
     911294142,
-    911130027,
-    1353484077
+    911130027
   ],
   "repoDescriptions": {
     "Saint-Ops": "End-to-end MLOps platform for sensor anomaly detection — FastAPI, TensorFlow, MLflow, Docker, and Kubernetes.",

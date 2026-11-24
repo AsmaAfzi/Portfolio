@@ -39,6 +39,7 @@ export default async function AdminReposPage() {
             repos={repos}
             initialHiddenIds={site.hiddenRepoIds}
             initialTech={site.repoTech ?? {}}
+            initialDescriptions={site.repoDescriptions ?? {}}
             detectedTech={detectedTech}
           />
         )}

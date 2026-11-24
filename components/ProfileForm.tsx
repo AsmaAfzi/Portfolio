@@ -47,7 +47,7 @@ export function ProfileForm({ initialProfile, repos }: ProfileFormProps) {
       return;
     }
 
-    setSuccess("Profile saved.");
+    setSuccess("Profile saved. Your live site updates once Vercel finishes redeploying (about a minute).");
     router.refresh();
   }
 

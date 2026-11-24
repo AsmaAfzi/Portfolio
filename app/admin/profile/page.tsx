@@ -1,15 +1,15 @@
 import { AdminNav } from "@/components/AdminNav";
 import { ProfileForm } from "@/components/ProfileForm";
 import { Card } from "@/components/ui/Card";
-import { getGitHubRepos } from "@/lib/github-repos";
+import { getReposWithDescriptions } from "@/lib/display";
 import { getProfile } from "@/lib/profile";
 
 export default async function ProfilePage() {
   const profile = await getProfile();
-  let repos: Awaited<ReturnType<typeof getGitHubRepos>> = [];
+  let repos: Awaited<ReturnType<typeof getReposWithDescriptions>> = [];
 
   try {
-    repos = await getGitHubRepos();
+    repos = await getReposWithDescriptions();
   } catch {
     repos = [];
   }
