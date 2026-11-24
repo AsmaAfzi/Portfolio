@@ -128,8 +128,12 @@
       "status": "completed"
     }
   ],
-  "inProgressProjects": [],
-  "inProgressRepoIds": [
-    1353484077
-  ]
+  "inProgressProjects": [
+    {
+      "id": "project-mwup6xkr",
+      "title": "Smart lock",
+      "description": "sm lck u h n d"
+    }
+  ],
+  "inProgressRepoIds": []
 }
