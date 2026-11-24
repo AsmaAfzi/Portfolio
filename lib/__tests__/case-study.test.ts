@@ -110,6 +110,37 @@ Detects products on shelves from CCTV feeds.
     expect(parseCaseStudy("# Project\n\n## Installation\n\nRun it.")).toEqual([]);
   });
 
+  it("summarises a setup-guide README as What I built", () => {
+    const readme = [
+      "# Portfolio",
+      "",
+      "Next.js portfolio that displays your **public GitHub repositories**.",
+      "",
+      "## Quick setup",
+      "",
+      "- npm install",
+      "",
+      "## Admin CMS",
+      "",
+      "- `ADMIN_PASSWORD`",
+      "",
+      "| Page | What it does |",
+      "|------|----------------|",
+      "| `/admin/repos` | Show/hide repos |",
+      "| `/admin/theme` | Colors and spacing |",
+    ].join("\n");
+    expect(parseCaseStudy(readme)).toEqual([
+      {
+        key: "built",
+        label: "What I built",
+        blocks: [
+          { type: "p", text: "Next.js portfolio that displays your public GitHub repositories." },
+          { type: "list", items: ["/admin/repos — Show/hide repos", "/admin/theme — Colors and spacing"] },
+        ],
+      },
+    ]);
+  });
+
   it("truncates very long text", () => {
     const sections = parseCaseStudy(`## Problem\n${"word ".repeat(120)}`);
     const block = sections[0].blocks[0];

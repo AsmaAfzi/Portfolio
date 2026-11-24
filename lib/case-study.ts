@@ -243,6 +243,17 @@ export function parseCaseStudy(markdown: string): CaseStudySection[] {
     if (intro.length + list.length > 0) found.set("built", [...intro, ...list]);
   }
 
+  // READMEs written as setup guides still say what the project is; summarise that.
+  if (found.size === 0) {
+    const intro = introParagraph(segments);
+    const highlights = findHighlights(segments);
+    const blocks: CaseStudyBlock[] = [
+      ...(intro ? [{ type: "p" as const, text: intro }] : []),
+      ...(highlights.length > 0 ? [{ type: "list" as const, items: highlights }] : []),
+    ];
+    if (blocks.length > 0) found.set("built", blocks);
+  }
+
   return ORDER.filter((key) => found.has(key)).map((key) => ({
     key,
     label: CASE_STUDY_LABELS[key],
@@ -254,7 +265,11 @@ const MAX_SUMMARY = 180;
 
 /** A one-line description from a README: the overview, else the intro under the title, else the problem. */
 export function summarizeReadme(markdown: string): string | null {
-  const segments = toSegments(markdown);
+  const paragraph = introParagraph(toSegments(markdown));
+  return paragraph ? shorten(paragraph) : null;
+}
+
+function introParagraph(segments: Segment[]) {
   const overview = findSegment(segments, OVERVIEW, new Set());
   const problem = findSegment(segments, SYNONYMS.problem, new Set());
   const intro = segments.findIndex((segment, i) => i === 0 || segment.level === 1);
@@ -264,14 +279,47 @@ export function summarizeReadme(markdown: string): string | null {
 
   for (const index of candidates) {
     const paragraph = toBlocks(segments[index].lines).find((block) => block.type === "p");
-    if (!paragraph || paragraph.type !== "p" || paragraph.text.length < 20) continue;
-    return shorten(paragraph.text);
+    if (paragraph?.type === "p" && paragraph.text.length >= 20) return paragraph.text;
   }
   return null;
 }
 
+// Highlights come from the first descriptive section: a two-column table
+// ("thing | what it does") reads better than bullets, which are often config.
+function findHighlights(segments: Segment[]) {
+  for (const segment of segments.slice(1)) {
+    if (isUsageHeading(segment.title)) continue;
+    const rows = tableRows(segment.lines);
+    if (rows.length > 0) return rows.slice(0, MAX_ITEMS);
+  }
+  for (const segment of segments.slice(1)) {
+    if (isUsageHeading(segment.title)) continue;
+    const list = toBlocks(segment.lines).find((block) => block.type === "list");
+    if (list?.type === "list") return list.items;
+  }
+  return [];
+}
+
+function tableRows(lines: string[]) {
+  const rows = lines
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith("|"))
+    .map((line) =>
+      line
+        .replace(/^\||\|$/g, "")
+        .split("|")
+        .map((cell) => cleanInline(cell)),
+    );
+  // First row is the header; separator rows are all dashes and colons.
+  return rows
+    .slice(1)
+    .filter((cells) => cells.length >= 2 && !cells.every((cell) => /^:?-+:?$/.test(cell)))
+    .filter((cells) => cells[0] && cells[cells.length - 1])
+    .map((cells) => truncate(`${cells[0]} — ${cells[cells.length - 1]}`));
+}
+
 function isUsageHeading(title: string) {
-  return /^(installation|install|setup|getting started|usage|requirements|prerequisites|license|table of contents|contents)$/.test(
+  return /^(installation|install|setup|quick ?start|quick setup|getting started|usage|running( locally)?|requirements|prerequisites|configuration|environment( variables)?|api( reference)?|license|contributing|table of contents|contents)$/.test(
     normalizeTitle(title),
   );
 }
